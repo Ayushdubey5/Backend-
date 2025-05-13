@@ -1,14 +1,21 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+require('dotenv').config(); // 👈 load environment variables
 
 // Create Express app
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/sydney-events', {
+app.use(cors({
+  origin: 'https://travel-detail-app.vercel.app', // your Vercel frontend
+  methods: ['GET', 'POST'],
+}));
+
+
+// Connect to MongoDB using .env
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
@@ -42,7 +49,7 @@ app.post('/api/email', async (req, res) => {
 });
 
 // Start the server
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
